@@ -1,0 +1,502 @@
+/* Reset e Estilos Globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #111422;
+    font-family: 'Poppins', 'Segoe UI', Tahoma, sans-serif;
+    color: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+    user-select: none;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 900px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Barra Superior (HUD) */
+.hud-bar {
+    width: 100%;
+    background: linear-gradient(180deg, #2b3044 0%, #1a1e2d 100%);
+    border: 3px solid #ffcc00;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.player-info, .score-info, .level-info, .coin-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    color: #ffcc00;
+    letter-spacing: 1px;
+}
+
+.value {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 14px;
+    color: #ffffff;
+    text-shadow: 2px 2px #000;
+}
+
+/* Tabuleiro do Jogo */
+.game-board {
+    width: 100%;
+    height: 480px;
+    border-left: 4px solid #333; /*borda do jogo*/
+    border-right: 4px solid #333;
+    border-bottom: 20px solid rgb(35, 160, 35); /*grama*/
+    border-radius: 0 0 12px 12px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(#87ceeb, #e0f6ff); /*ceu*/
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); /*é o brilinho atras do jogo*/
+    cursor: pointer;
+}
+
+/* Elementos do Jogo */
+.pipe {
+    position: absolute;
+    bottom: 0;
+    width: 80px;
+    right: -80px;
+}
+
+.mario {
+    width: 150px;
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    z-index: 10;
+}
+
+.clouds {
+    position: absolute;
+    width: 550px;
+    top: 30px;
+    right: -550px;
+}
+
+/* Dica de pulo na tela */
+.jump-tip {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    color: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+/* Animações ativas durante o jogo */
+.game-board.running .pipe {
+    animation: pipe-animation 1.6s infinite linear;
+}
+
+.game-board.running .clouds {
+    animation: clouds-animation 18s infinite linear;
+}
+
+.jump {
+    animation: jump-animation 600ms ease-out;
+}
+
+@keyframes pipe-animation {
+    from {
+        right: -80px;
+    }
+    to {
+        right: 100%;
+    }
+}
+
+@keyframes jump-animation {
+    0% {
+        bottom: 0;
+    }
+    40% {
+        bottom: 180px;
+    }
+    50% {
+        bottom: 180px;
+    }
+    100% {
+        bottom: 0;
+    }
+}
+
+@keyframes clouds-animation {
+    from {
+        right: -550px;
+    }
+    to {
+        right: 100%;
+    }
+}
+
+/* Modais / Telas Sobrepostas */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 12, 22, 0.85);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+}
+
+.modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-card {
+    background: #1f2438;
+    border: 4px solid #e52521;
+    border-radius: 16px;
+    padding: 30px;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(229, 37, 33, 0.4), 0 15px 40px rgba(0, 0, 0, 0.7);
+}
+
+.modal-header {
+    margin-bottom: 25px;
+}
+
+.game-title {
+    font-family: 'Press Start 2P', cursive;
+    color: #ffce00;
+    font-size: 20px;
+    line-height: 1.5;
+    text-shadow: 3px 3px #e52521, 6px 6px #000000;
+    margin-bottom: 12px;
+}
+
+.game-subtitle {
+    font-size: 13px;
+    color: #a4b1cd;
+}
+
+/* Formulário de Início */
+.start-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.input-group label {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    color: #ffffff;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border: 2px solid #3b4468;
+    background: #121524;
+    color: #ffffff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.25s;
+}
+
+.input-group input:focus {
+    border-color: #ffcc00;
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+/* Botões */
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, #e52521 0%, #b81410 100%);
+    color: #ffffff;
+    border-bottom: 4px solid #7a0b08;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(180deg, #ff3833 0%, #cf1915 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(229, 37, 33, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(2px);
+    border-bottom: 2px solid #7a0b08;
+}
+
+.btn-secondary {
+    background: #2f3752;
+    color: #cbd5e1;
+    border-bottom: 4px solid #1a1e2f;
+}
+
+.btn-secondary:hover {
+    background: #3c4667;
+    color: #ffffff;
+}
+
+/* Status do Laragon */
+.server-status {
+    margin-top: 20px;
+    font-size: 11px;
+    color: #8c97b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ffcc00;
+    display: inline-block;
+}
+
+.status-dot.online {
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+}
+
+.status-dot.offline {
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+}
+
+/* Tela de Game Over & Ranking */
+.gameover-card {
+    max-width: 540px;
+}
+
+.gameover-title {
+    font-family: 'Press Start 2P', cursive;
+    color: #e52521;
+    font-size: 26px;
+    text-shadow: 3px 3px #000;
+    margin-bottom: 10px;
+}
+
+.final-score-box {
+    background: #141726;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #333d5d;
+}
+
+.final-score-label {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+}
+
+.final-score-num {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 24px;
+    color: #ffcc00;
+    text-shadow: 2px 2px #000;
+}
+
+/* Tabela de Ranking */
+.ranking-container {
+    margin-bottom: 20px;
+}
+
+.ranking-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    color: #ffcc00;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+}
+
+.table-wrapper {
+    max-height: 220px;
+    overflow-y: auto;
+    border-radius: 8px;
+    background: #121524;
+    border: 1px solid #2b334d;
+}
+
+.table-wrapper::-webkit-scrollbar {
+    width: 6px;
+}
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #3b4468;
+    border-radius: 4px;
+}
+
+.ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+}
+
+.ranking-table th {
+    background: #242c44;
+    color: #ffcc00;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    padding: 10px 14px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.ranking-table td {
+    padding: 8px 14px;
+    border-bottom: 1px solid #1c2236;
+}
+
+.ranking-table tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.ranking-table tr.highlight-current {
+    background: rgba(255, 204, 0, 0.15) !important;
+    font-weight: 700;
+    color: #ffcc00;
+}
+
+.ranking-pos {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    width: 40px;
+}
+
+.loading-cell {
+    text-align: center;
+    padding: 20px !important;
+    color: #8c97b8;
+}
+
+.save-status {
+    margin-top: 8px;
+    font-size: 11px;
+    color: #10b981;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .game-board {
+        height: 380px;
+    }
+    .mario {
+        width: 100px;
+    }
+    .pipe {
+        width: 60px;
+    }
+    .hud-bar {
+        padding: 10px 14px;
+    }
+    .label {
+        font-size: 9px;
+    }
+    .value {
+        font-size: 11px;
+    }
+    .game-title {
+        font-size: 16px;
+    }
+    .btn {
+        font-size: 10px;
+        padding: 12px 14px;
+    }
+}
+
+/* Moeda estática */
+.coin {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    left: 80px;
+    bottom: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff3a0, #ffcc00 60%, #c79100);
+    border: 3px solid #b8860b;
+    z-index: 11;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.coin.visible {
+    opacity: 1;
+    visibility: visible;
+}
