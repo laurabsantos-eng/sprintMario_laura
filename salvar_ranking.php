@@ -19,7 +19,7 @@ if (!$input) {
 
 $nome = isset($input['nome']) ? trim($input['nome']) : '';
 $pontos = isset($input['pontos']) ? (int)$input['pontos'] : 0;
-$moedas = isset($input['moedas']) ? (int)$input['moedas'] : 0; 
+$coroa = isset($input['coroa']) ? (int)$input['coroa'] : 0; 
 
 if (empty($nome)) {
     $nome = 'Jogador Anônimo';
@@ -30,10 +30,10 @@ $nome = mb_substr($nome, 0, 40);
 
 try {
     // Insere o registro no banco com Prepared Statement
-    $stmt = $pdo->prepare("INSERT INTO ranking (nome, moeda, pontos) VALUES (:nome, :moeda, :pontos)");
+    $stmt = $pdo->prepare("INSERT INTO ranking (nome, coroa, pontos) VALUES (:nome, :coroa, :pontos)");
     $stmt->execute([
         ':nome' => $nome,
-        ':moeda' => $moedas, 
+        ':coroa' => $coroa, 
         ':pontos' => $pontos
     ]);
 

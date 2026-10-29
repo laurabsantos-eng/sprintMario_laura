@@ -26,7 +26,7 @@
         "CREATE TABLE IF NOT EXISTS `ranking`(
         `id` INT AUTO_INCREMENT PRIMARY KEY,
         `nome` VARCHAR(50) NOT NULL,
-        `moeda` INT NOT NULL,
+        `coroa` INT NOT NULL,
         `pontos` INT NOT NULL,
         `data_registro` TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"
     );

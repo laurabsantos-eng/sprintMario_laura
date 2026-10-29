@@ -33,20 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let pendingSpeed = false;
     
     const levelDisplay = document.getElementById('level-display');
-    const coin = document.getElementById('coin');
-    const coinDisplay = document.getElementById('coin-display');
+    const crown = document.getElementById('crown');
+    const crownDisplay = document.getElementById('crown-display');
 
-    let coins = 0;
-    const COIN_MIN_HEIGHT = 90;      // altura mínima da moeda (px)
-    const COIN_MAX_HEIGHT = 260;     // altura máxima da moeda (px)
-    const COIN_MIN_X = 40;           // posição horizontal mínima
-    const COIN_MAX_X = 130;          // posição horizontal máxima
-    const COIN_LIFETIME = 2500;      // quanto tempo a moeda fica na tela (ms)
-    const COIN_SPAWN_MIN = 1200;     // tempo mínimo até a próxima moeda (ms)
-    const COIN_SPAWN_MAX = 2500;     // tempo máximo até a próxima moeda (ms)
+    let crowns = 0;
+    const CROWN_MIN_HEIGHT = 90;      // altura mínima da moeda (px)
+    const CROWN_MAX_HEIGHT = 260;     // altura máxima da moeda (px)
+    const CROWN_MIN_X = 40;           // posição horizontal mínima
+    const CROWN_MAX_X = 130;          // posição horizontal máxima
+    const CROWN_LIFETIME = 2500;      // quanto tempo a moeda fica na tela (ms)
+    const CROWN_SPAWN_MIN = 1200;     // tempo mínimo até a próxima moeda (ms)
+    const CROWN_SPAWN_MAX = 2500;     // tempo máximo até a próxima moeda (ms)
 
-    let coinSpawnTimer = null;
-    let coinHideTimer = null;
+    let crownSpawnTimer = null;
+    let crownHideTimer = null;
     
     let level = 1;
     const BASE_SPEED = 1.6;     // duração inicial do cano (segundos)
@@ -72,36 +72,36 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // Agenda a próxima moeda para daqui a um tempo aleatório
-    function scheduleNextCoin() {
-        clearTimeout(coinSpawnTimer);
-        coinSpawnTimer = setTimeout(spawnCoin, randomBetween(COIN_SPAWN_MIN, COIN_SPAWN_MAX));
+    // Agenda a próxima coroa para daqui a um tempo aleatório
+    function scheduleNextCrown() {
+        clearTimeout(crownSpawnTimer);
+        crownSpawnTimer = setTimeout(spawnCrown, randomBetween(CROWN_SPAWN_MIN, CROWN_SPAWN_MAX));
     }
 
-    // Mostra a moeda em uma posição aleatória
-    function spawnCoin() {
+    // Mostra a coroa em uma posição aleatória
+    function spawnCrown() {
         if (!isPlaying) return;
 
-        coin.style.left = `${randomBetween(COIN_MIN_X, COIN_MAX_X)}px`;
-        coin.style.bottom = `${randomBetween(COIN_MIN_HEIGHT, COIN_MAX_HEIGHT)}px`;
-        coin.classList.add('visible');
+        crown.style.left = `${randomBetween(CROWN_MIN_X, CROWN_MAX_X)}px`;
+        crown.style.bottom = `${randomBetween(CROWN_MIN_HEIGHT, CROWN_MAX_HEIGHT)}px`;
+        crown.classList.add('visible');
 
-        // se ninguém pegar, a moeda some sozinha
-        coinHideTimer = setTimeout(hideCoin, COIN_LIFETIME);
+        // se ninguém pegar, a coroa some sozinha
+        crownHideTimer = setTimeout(hideCrown, CROWN_LIFETIME);
     }
 
-    // Esconde a moeda e agenda a próxima
-    function hideCoin() {
-        coin.classList.remove('visible');
-        clearTimeout(coinHideTimer);
-        scheduleNextCoin();
+    // Esconde a coroa e agenda a próxima
+    function hideCrown() {
+        crown.classList.remove('visible');
+        clearTimeout(crownHideTimer);
+        scheduleNextCrown();
     }
 
     // Para tudo (usado no Game Over e ao reiniciar)
-    function stopCoins() {
-        clearTimeout(coinSpawnTimer);
-        clearTimeout(coinHideTimer);
-        coin.classList.remove('visible');
+    function stopCrowns() {
+        clearTimeout(crownSpawnTimer);
+        clearTimeout(crownHideTimer);
+        crown.classList.remove('visible');
     }
 
     // Recupera último nome utilizado caso exista
@@ -142,10 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
         pendingSpeed = false;                // coloca a velocidade inicial no cano
         applySpeed();
         
-        coins = 0;
-        coinDisplay.textContent = '0';
-        stopCoins();
-        scheduleNextCoin();
+        crowns = 0;
+        crownDisplay.textContent = '0';
+        stopCrowns();
+        scheduleNextCrown();
            
 
         // Ativa animações CSS do jogo
@@ -204,12 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
-      function checkCoinCollect() {
-        // só tenta coletar se a moeda estiver visível
-        if (!coin.classList.contains('visible')) return;
+      function checkCrownCollect() {
+        // só tenta coletar se a coroa estiver visível
+        if (!crown.classList.contains('visible')) return;
 
         const m = mario.getBoundingClientRect();
-        const c = coin.getBoundingClientRect();
+        const c = crown.getBoundingClientRect();
 
         // margens para ignorar o espaço transparente da imagem do Mario
         const insetX = 30;
@@ -222,15 +222,15 @@ document.addEventListener('DOMContentLoaded', () => {
             m.bottom > c.top;
 
         if (overlap) {
-            coins += 1;
-            coinDisplay.textContent = coins;
-            hideCoin();   // some e agenda a próxima
+            crowns += 1;
+            crownDisplay.textContent = crowns;
+            hideCrown();   // some e agenda a próxima
         }
     }
 
     function checkCollision() {
         if (!isPlaying) return;
-        checkCoinCollect();
+        checkCrownCollect();
 
         const pipePosition = pipe.offsetLeft;
         const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = false;
         clearInterval(gameLoop);
         clearInterval(scoreLoop);
-        stopCoins(); 
+        stopCrowns(); 
 
 
         gameBoard.classList.remove('running');
@@ -270,11 +270,11 @@ document.addEventListener('DOMContentLoaded', () => {
         gameoverModal.classList.add('active');
 
         // Salva a pontuação no banco MySQL via PHP
-        saveScore(currentPlayer, score, coins);
+        saveScore(currentPlayer, score, crowns);
     }
 
 
-    function saveScore(playerName, finalScore, finalCoins) {
+    function saveScore(playerName, finalScore, finalCrowns) {
         fetch('salvar_ranking.php', {
             method: 'POST',
             headers: {
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify({
                 nome: playerName,
                 pontos: finalScore,
-                moedas: finalCoins 
+                coroa: finalCrowns
             })
         })
             .then(res => res.json())

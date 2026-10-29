@@ -42,9 +42,9 @@ try {
                 <span class="value" id="score-display">0</span>
             </div>
 
-            <div class="coin-info">
-                <span class="label">MOEDAS:</span>
-                <span class="value" id="coin-display">0</span>
+            <div class="crown-info">
+                <span class="label">COROAS:</span>
+                <span class="value" id="crown-display">0</span>
             </div>
 
             <div class="level-info">
@@ -58,7 +58,7 @@ try {
             <img src="assets/clouds.png" class="clouds" alt="Nuvens">
             <img src="assets/mario.gif" class="mario" alt="Mario">
             <img src="assets/pipe.png" class="pipe" alt="Cano">
-            <div class="coin" id="coin"></div>
+            <img src="assets/coroa.png" class="crown" id="crown" alt="Coroa">
             <span class="jump-tip" id="jump-tip">Pressione ESPAÇO ou clique para pular</span>
         </main>
     </div>
