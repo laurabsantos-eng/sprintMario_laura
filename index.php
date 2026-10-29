@@ -57,9 +57,10 @@ try {
         <main class="game-board" id="game-board">
             <img src="assets/clouds.png" class="clouds" alt="Nuvens">
             <img src="assets/mario.gif" class="mario" alt="Mario">
-            <img src="assets/castelo.png" class="pipe" alt="Castelo">
+            <img src="assets/castelo.png" class="castelo" alt="Castelo">
             <img src="assets/coroa.png" class="crown" id="crown" alt="Coroa">
             <span class="jump-tip" id="jump-tip">Pressione ESPAÇO</span>
+            <div class="unlock-toast" id="unlock-toast" role="status" aria-live="polite"></div>
         </main>
     </div>
 
@@ -107,6 +108,10 @@ try {
         <div class="modal-card gameover-card">
             <div class="modal-header">
                 <h2 class="gameover-title">GAME OVER</h2>
+                <p class="unlock-message" id="unlock-message" hidden>
+                    🏆 CONQUISTA! Você chegou ao último level e desbloqueou <strong>Wanda</strong> e <strong>Cosmo</strong>!
+                    Escolha eles em "TROCAR PERSONAGEM".
+                </p>
                 <div class="final-score-box">
                     <div class="final-score-label">SUA PONTUAÇÃO</div>
                     <div class="final-score-num" id="final-score-value">0</div>
@@ -162,6 +167,8 @@ try {
         <div class="character-grid" id="character-list">
             <!-- os cartões são criados pelo JavaScript -->
         </div>
+
+        <p class="character-hint" id="character-hint"></p>
 
         <div class="menu-options">
             <button type="button" class="menu-btn" id="btn-character-back">VOLTAR</button>

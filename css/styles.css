@@ -78,7 +78,7 @@ body {
 }
 
 /* Elementos do Jogo */
-.pipe {
+.castelo {
     position: absolute;
     bottom: 0;
     width: 60px;
@@ -95,9 +95,12 @@ body {
 
 /* Tamanho da Wanda e do Cosmo (o Mario continua com 150px) */
 .mario[data-char="wanda"],
-.mario[data-char="cosmo"] {
-    width: 110px;
-    margin-left: 20px;
+.mario[data-char="cosmo"],
+.mario[data-char="wanda-wanda"],
+.mario[data-char="cosmo-visao"] {
+    width: 85px;
+    margin-left: 0;
+    object-fit: contain;
 }
 
 .clouds {
@@ -121,8 +124,8 @@ body {
 }
 
 /* Animações ativas durante o jogo */
-.game-board.running .pipe {
-    animation: pipe-animation 1.6s infinite linear;
+.game-board.running .castelo {
+    animation: castelo-animation 1.6s infinite linear;
 }
 
 .game-board.running .clouds {
@@ -133,7 +136,7 @@ body {
     animation: jump-animation 600ms ease-out;
 }
 
-@keyframes pipe-animation {
+@keyframes castelo-animation {
     from {
         right: -80px;
     }
@@ -448,9 +451,9 @@ body {
     }
     .mario[data-char="wanda"],
     .mario[data-char="cosmo"] {
-        width: 80px;
+        width: 65px;
     }
-    .pipe {
+    .castelo {
         width: 45px;
     }
     .hud-bar {
@@ -471,7 +474,7 @@ body {
 /* Coroa estática (imagem) */
 .crown {
     position: absolute;
-    width: 80px;
+    width: 60px;
     height: auto;
     left: 80px;
     bottom: 120px;
@@ -505,15 +508,15 @@ body {
     font-family: 'Press Start 2P', cursive;
     font-size: 42px;
     line-height: 1.3;
-    color: #ffc93c;
-    text-shadow: 4px 4px 0 #b34a00, 8px 8px 0 #000;
+    color: #fff;
+    text-shadow: 4px 4px 0 #7df58b, 8px 8px 0 #ff69bb;
     margin-bottom: 14px;
 }
 
 .menu-title-small {
     font-size: 18px;
     line-height: 1.6;
-    text-shadow: 3px 3px 0 #b34a00, 5px 5px 0 #000;
+    text-shadow: 3px 3px 0 #ffffff, 5px 5px 0 #000;
 }
 
 .menu-subtitle {
@@ -563,13 +566,13 @@ body {
     content: '▶';
     position: absolute;
     left: 0;
-    color: #ffc93c;
+    color: #ff69bb;
     opacity: 0;
 }
 
 .menu-btn:hover,
 .menu-btn:focus-visible {
-    color: #ffc93c;
+    color: #7df58b;
     outline: none;
 }
 
@@ -652,4 +655,83 @@ body {
     .menu-title { font-size: 28px; }
     .menu-title-small { font-size: 13px; }
     .menu-btn { font-size: 12px; }
+}
+
+/* ===== BÔNUS: PERSONAGENS DESBLOQUEÁVEIS ===== */
+
+/* Aviso rápido dentro do jogo quando chega no último level */
+.unlock-toast {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translate(-50%, -20px);
+    z-index: 20;
+    max-width: 90%;
+    padding: 12px 18px;
+    background: #141726;
+    border: 3px solid #7df58b;
+    border-radius: 10px;
+    box-shadow: 0 0 18px rgba(125, 245, 139, 0.8);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #ffcc00;
+    text-align: center;
+    text-shadow: 2px 2px 0 #000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.unlock-toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+/* Mensagem fixa na tela de Game Over */
+.unlock-message {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: rgba(125, 245, 139, 0.12);
+    border: 2px solid #7df58b;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #fff;
+}
+
+.unlock-message[hidden] {
+    display: none;
+}
+
+.unlock-message strong {
+    color: #ffcc00;
+}
+
+/* Cartão de personagem bloqueado */
+.character-option.locked {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.character-option.locked img {
+    filter: grayscale(1) brightness(0.4);
+}
+
+.character-option.locked:hover {
+    transform: none;
+    border-color: #2f3752;
+}
+
+.character-hint {
+    margin-bottom: 18px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 9px;
+    line-height: 1.8;
+    color: #ffcc00;
+    text-shadow: 2px 2px 0 #000;
+}
+
+@media (max-width: 600px) {
+    .unlock-toast { font-size: 9px; }
 }
