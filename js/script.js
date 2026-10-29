@@ -10,20 +10,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const hudPlayerName = document.getElementById('hud-player-name');
     const scoreDisplay = document.getElementById('score-display');
     const jumpTip = document.getElementById('jump-tip');
-    
+
     // Modais e Telas
     const startModal = document.getElementById('start-modal');
     const startForm = document.getElementById('start-form');
     const playerInput = document.getElementById('player-input');
     const btnViewRanking = document.getElementById('btn-view-ranking');
-    
+
     const gameoverModal = document.getElementById('gameover-modal');
     const finalScoreValue = document.getElementById('final-score-value');
     const saveStatusMsg = document.getElementById('save-status-msg');
     const rankingBody = document.getElementById('ranking-body');
     const btnRestart = document.getElementById('btn-restart');
     const btnChangePlayer = document.getElementById('btn-change-player');
-    
+
     // Variáveis de Estado
     let currentPlayer = '';
     let score = 0;
@@ -47,7 +47,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let crownSpawnTimer = null;
     let crownHideTimer = null;
-    
+
+    // ===== PERSONAGENS =====
+    const CHARACTERS = [
+        { id: 'mario', nome: 'Mario', run: 'assets/mario.gif' },
+        { id: 'wanda', nome: 'Wanda', run: 'assets/wanda.gif' },
+        { id: 'cosmo', nome: 'Cosmo', run: 'assets/cosmo.gif' }
+    ];
+
+    const menuCharacterImg = document.getElementById('menu-character-img');
+    const characterNameEl = document.getElementById('character-name');
+    const characterList = document.getElementById('character-list');
+    const characterModal = document.getElementById('character-modal');
+    const btnChangeCharacter = document.getElementById('btn-change-character');
+    const btnCharacterBack = document.getElementById('btn-character-back');
+
+    // Lê o personagem salvo no navegador; se não houver, usa o Mario
+    const savedCharId = localStorage.getItem('mario_jump_character');
+    let selectedCharacter = CHARACTERS.find(c => c.id === savedCharId) || CHARACTERS[0];
+
     let level = 1;
     const BASE_SPEED = 1.6;     // duração inicial do cano (segundos)
     const MIN_SPEED = 0.9;      // limite: não deixar impossível
@@ -104,19 +122,49 @@ document.addEventListener('DOMContentLoaded', () => {
         crown.classList.remove('visible');
     }
 
+    // Aplica o personagem escolhido no jogo e no menu
+    function applyCharacter() {
+        mario.src = selectedCharacter.run;
+        mario.dataset.char = selectedCharacter.id;   // marca quem está em jogo
+        menuCharacterImg.src = selectedCharacter.run;
+        characterNameEl.textContent = selectedCharacter.nome;
+    }
+
+    // Desenha os cartões de escolha
+    function renderCharacters() {
+        characterList.innerHTML = '';
+
+        CHARACTERS.forEach(char => {
+            const card = document.createElement('button');
+            card.type = 'button';
+            card.className = 'character-option' + (char.id === selectedCharacter.id ? ' selected' : '');
+            card.innerHTML = `<img src="${char.run}" alt="${char.nome}"><span>${char.nome}</span>`;
+
+            card.addEventListener('click', () => {
+                selectedCharacter = char;
+                localStorage.setItem('mario_jump_character', char.id);
+                applyCharacter();
+                renderCharacters();
+            });
+
+            characterList.appendChild(card);
+        });
+    }
+
+    applyCharacter();   // aplica o personagem salvo ao abrir a página
+
     // Recupera último nome utilizado caso exista
     const savedName = localStorage.getItem('mario_jump_player');
     if (savedName && playerInput) {
         playerInput.value = savedName;
     }
 
-    
+
     // quando o cano termina uma volta e reinicia, aplica a velocidade pendente
     pipe.addEventListener('animationiteration', () => {
         if (pendingSpeed) {
             applySpeed(true);
             pendingSpeed = false;
-            console.log('Velocidade aplicada:', getPipeDuration());
         }
     });
 
@@ -141,12 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
         levelDisplay.textContent = '1';     // atualiza o número na tela
         pendingSpeed = false;                // coloca a velocidade inicial no cano
         applySpeed();
-        
+
         crowns = 0;
         crownDisplay.textContent = '0';
         stopCrowns();
         scheduleNextCrown();
-           
+
 
         // Ativa animações CSS do jogo
         gameBoard.classList.add('running');
@@ -161,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (newLevel !== level) {
                     level = newLevel;
                     levelDisplay.textContent = level;
-                    pendingSpeed = true; 
+                    pendingSpeed = true;
                 }
             }
         }, 100);
@@ -177,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pipe.style.left = '';
 
         // Reseta Mario
-        mario.src = 'assets/mario.gif';
+        mario.src = selectedCharacter.run;
         mario.style.animation = '';
         mario.style.bottom = '0px';
         mario.style.width = '';
@@ -201,10 +249,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             mario.classList.remove('jump');
-        }, 500);
+        }, 600);
     }
 
-      function checkCrownCollect() {
+    function checkCrownCollect() {
         // só tenta coletar se a coroa estiver visível
         if (!crown.classList.contains('visible')) return;
 
@@ -236,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const marioPosition = +window.getComputedStyle(mario).bottom.replace('px', '');
 
         // Tolerância de colisão: quando o cano está na faixa de contato com o Mario
-        if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 80) {
+        if (pipePosition <= 120 && pipePosition > 0 && marioPosition < 100) {
             triggerGameOver(pipePosition, marioPosition);
         }
     }
@@ -245,7 +293,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlaying = false;
         clearInterval(gameLoop);
         clearInterval(scoreLoop);
-        stopCrowns(); 
+        stopCrowns();
 
 
         gameBoard.classList.remove('running');
@@ -416,6 +464,19 @@ document.addEventListener('DOMContentLoaded', () => {
         startModal.classList.add('active');
         playerInput.value = '';
         playerInput.focus();
+    });
+
+    // Botão "TROCAR PERSONAGEM" no menu inicial
+    btnChangeCharacter.addEventListener('click', () => {
+        renderCharacters();                       // desenha os cartões
+        startModal.classList.remove('active');    // fecha o menu
+        characterModal.classList.add('active');   // abre a escolha
+    });
+
+    // Botão "VOLTAR" na escolha de personagem
+    btnCharacterBack.addEventListener('click', () => {
+        characterModal.classList.remove('active');
+        startModal.classList.add('active');
     });
 
     // 5. Controle do Pulo por Teclado (Espaço ou Seta para Cima)

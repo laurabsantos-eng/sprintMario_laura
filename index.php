@@ -24,7 +24,7 @@ try {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mario Jump - Jogo com Ranking MySQL</title>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -57,45 +57,50 @@ try {
         <main class="game-board" id="game-board">
             <img src="assets/clouds.png" class="clouds" alt="Nuvens">
             <img src="assets/mario.gif" class="mario" alt="Mario">
-            <img src="assets/pipe.png" class="pipe" alt="Cano">
+            <img src="assets/castelo.png" class="pipe" alt="Castelo">
             <img src="assets/coroa.png" class="crown" id="crown" alt="Coroa">
-            <span class="jump-tip" id="jump-tip">Pressione ESPAÇO ou clique para pular</span>
+            <span class="jump-tip" id="jump-tip">Pressione ESPAÇO</span>
         </main>
     </div>
 
-    <!-- 1. TELA DE INÍCIO / INSERIR NOME -->
-    <div class="modal-overlay active" id="start-modal">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h1 class="game-title">MARIO JUMP</h1>
-                <p class="game-subtitle">Corra, desvie dos canos e dispute o topo do ranking!</p>
+<!-- 1. MENU INICIAL -->
+<div class="modal-overlay menu-overlay active" id="start-modal">
+    <div class="menu-pixel">
+        <h1 class="menu-title">MARIO<br>JUMP</h1>
+        <p class="menu-subtitle">Corra, desvie dos canos e dispute o topo do ranking!</p>
+
+        <form class="start-form" id="start-form">
+            <div class="input-group">
+                <label for="player-input">DIGITE SEU NOME:</label>
+                <input
+                    type="text"
+                    id="player-input"
+                    placeholder="Ex: Seu Nome"
+                    maxlength="30"
+                    required
+                    autocomplete="off"
+                    autofocus
+                >
             </div>
 
-            <form class="start-form" id="start-form">
-                <div class="input-group">
-                    <label for="player-input">DIGITE SEU NOME:</label>
-                    <input 
-                        type="text" 
-                        id="player-input" 
-                        placeholder="Ex: Seu Nome" 
-                        maxlength="30" 
-                        required 
-                        autocomplete="off"
-                        autofocus
-                    >
-                </div>
-
-                <div class="modal-actions">
-                    <button type="submit" class="btn btn-primary" id="btn-start">INICIAR JOGO</button>
-                    <button type="button" class="btn btn-secondary" id="btn-view-ranking">VER RANKING</button>
-                </div>
-            </form>
-
-            <div class="server-status" id="server-status">
-                <span class="status-dot online"></span> Conectado ao MySQL
+            <div class="menu-options">
+                <button type="submit" class="menu-btn" id="btn-start">INICIAR JOGO</button>
+                <button type="button" class="menu-btn" id="btn-view-ranking">VER RANKING</button>
+                <button type="button" class="menu-btn" id="btn-change-character">TROCAR PERSONAGEM</button>
             </div>
+        </form>
+
+        <div class="selected-character">
+            <img id="menu-character-img" src="assets/mario.gif" alt="Personagem">
+            <span>PERSONAGEM: <strong id="character-name">Mario</strong></span>
+        </div>
+
+        <div class="server-status" id="server-status">
+            <span class="status-dot online"></span> Conectado ao MySQL
         </div>
     </div>
+</div>
+
 
     <!-- 2. TELA DE GAME OVER & RANKING -->
     <div class="modal-overlay" id="gameover-modal">
@@ -149,6 +154,20 @@ try {
         </div>
     </div>
 
+    <!-- 3. TELA DE ESCOLHA DE PERSONAGEM -->
+    <div class="modal-overlay menu-overlay" id="character-modal">
+    <div class="menu-pixel">
+        <h2 class="menu-title menu-title-small">ESCOLHA SEU PERSONAGEM</h2>
+
+        <div class="character-grid" id="character-list">
+            <!-- os cartões são criados pelo JavaScript -->
+        </div>
+
+        <div class="menu-options">
+            <button type="button" class="menu-btn" id="btn-character-back">VOLTAR</button>
+        </div>
+    </div>
+</div>
    
     <script src="js/script.js" defer></script>
 </body>

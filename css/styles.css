@@ -41,7 +41,7 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.605);
 }
 
-.player-info, .score-info, .level-info, crown-info {
+.player-info, .score-info, .level-info, .crown-info {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -81,7 +81,7 @@ body {
 .pipe {
     position: absolute;
     bottom: 0;
-    width: 80px;
+    width: 60px;
     right: -80px;
 }
 
@@ -91,6 +91,13 @@ body {
     bottom: 0;
     left: 20px;
     z-index: 10;
+}
+
+/* Tamanho da Wanda e do Cosmo (o Mario continua com 150px) */
+.mario[data-char="wanda"],
+.mario[data-char="cosmo"] {
+    width: 110px;
+    margin-left: 20px;
 }
 
 .clouds {
@@ -193,20 +200,6 @@ body {
 
 .modal-header {
     margin-bottom: 25px;
-}
-
-.game-title {
-    font-family: 'Press Start 2P', cursive;
-    color: #96c3ff;
-    font-size: 20px;
-    line-height: 1.5;
-    text-shadow: 3px 3px #ffe373, 6px 6px #000000;
-    margin-bottom: 12px;
-}
-
-.game-subtitle {
-    font-size: 13px;
-    color: #fcfcfc;
 }
 
 /* Formulário de Início */
@@ -318,11 +311,6 @@ body {
 .status-dot.online {
     background: #10b981;
     box-shadow: 0 0 8px #10b981;
-}
-
-.status-dot.offline {
-    background: #ef4444;
-    box-shadow: 0 0 8px #ef4444;
 }
 
 /* Tela de Game Over & Ranking */
@@ -458,8 +446,12 @@ body {
     .mario {
         width: 100px;
     }
+    .mario[data-char="wanda"],
+    .mario[data-char="cosmo"] {
+        width: 80px;
+    }
     .pipe {
-        width: 60px;
+        width: 45px;
     }
     .hud-bar {
         padding: 10px 14px;
@@ -469,9 +461,6 @@ body {
     }
     .value {
         font-size: 11px;
-    }
-    .game-title {
-        font-size: 16px;
     }
     .btn {
         font-size: 10px;
@@ -498,3 +487,169 @@ body {
     visibility: visible;
 }
 
+/* ===== MENU ESTILO PIXEL ===== */
+
+/* Fundo meio transparente: o jogo aparece atrás */
+.menu-overlay {
+    background: rgba(10, 12, 22, 0.35);
+    backdrop-filter: none;
+}
+
+.menu-pixel {
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+}
+
+.menu-title {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 42px;
+    line-height: 1.3;
+    color: #ffc93c;
+    text-shadow: 4px 4px 0 #b34a00, 8px 8px 0 #000;
+    margin-bottom: 14px;
+}
+
+.menu-title-small {
+    font-size: 18px;
+    line-height: 1.6;
+    text-shadow: 3px 3px 0 #b34a00, 5px 5px 0 #000;
+}
+
+.menu-subtitle {
+    font-size: 12px;
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 22px;
+}
+
+/* Campo de nome dentro do menu */
+.menu-pixel .input-group {
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.menu-pixel .input-group label {
+    text-shadow: 2px 2px 0 #000;
+}
+
+.menu-pixel .input-group input {
+    text-align: center;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* Lista de botões */
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.menu-btn {
+    position: relative;
+    background: none;
+    border: none;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 3px 3px 0 #000;
+    padding: 6px 28px;
+    cursor: pointer;
+}
+
+/* Setinha ▶ que aparece ao passar o mouse */
+.menu-btn::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: #ffc93c;
+    opacity: 0;
+}
+
+.menu-btn:hover,
+.menu-btn:focus-visible {
+    color: #ffc93c;
+    outline: none;
+}
+
+.menu-btn:hover::before,
+.menu-btn:focus-visible::before {
+    opacity: 1;
+    animation: arrow-blink 0.6s steps(2) infinite;
+}
+
+@keyframes arrow-blink {
+    50% { opacity: 0.2; }
+}
+
+/* Personagem atual no rodapé do menu */
+.selected-character {
+    margin-top: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 10px;
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.selected-character img {
+    width: 50px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.selected-character strong {
+    color: #7df58b;
+}
+
+/* Cartões da escolha de personagem */
+.character-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.character-option {
+    width: 140px;
+    padding: 12px;
+    background: rgba(20, 23, 38, 0.75);
+    border: 4px solid #2f3752;
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s;
+}
+
+.character-option img {
+    width: 100%;
+    height: 90px;
+    object-fit: contain;
+}
+
+.character-option:hover {
+    transform: translateY(-4px);
+    border-color: #ff69bb;
+}
+
+.character-option.selected {
+    border-color: #7df58b;
+    box-shadow: 0 0 15px rgba(125, 245, 139, 0.8);
+}
+
+@media (max-width: 600px) {
+    .menu-title { font-size: 28px; }
+    .menu-title-small { font-size: 13px; }
+    .menu-btn { font-size: 12px; }
+}
