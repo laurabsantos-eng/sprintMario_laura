@@ -23,7 +23,7 @@ try {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mario Jump - Jogo com Ranking MySQL</title>
+    <title>Magicos - Jogo com Ranking MySQL</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -67,7 +67,7 @@ try {
 <!-- 1. MENU INICIAL -->
 <div class="modal-overlay menu-overlay active" id="start-modal">
     <div class="menu-pixel">
-        <h1 class="menu-title">MARIO<br>JUMP</h1>
+        <h1 class="menu-title">PADRINHOS<br>MAGICOS</h1>
         <p class="menu-subtitle">Corra, desvie dos canos e dispute o topo do ranking!</p>
 
         <form class="start-form" id="start-form">
@@ -88,6 +88,7 @@ try {
                 <button type="submit" class="menu-btn" id="btn-start">INICIAR JOGO</button>
                 <button type="button" class="menu-btn" id="btn-view-ranking">VER RANKING</button>
                 <button type="button" class="menu-btn" id="btn-change-character">TROCAR PERSONAGEM</button>
+                <button type="button" class="menu-btn" id="btn-site">VISITAR SITE</button>
             </div>
         </form>
 
@@ -154,6 +155,7 @@ try {
 
             <div class="modal-actions">
                 <button type="button" class="btn btn-primary" id="btn-restart">JOGAR NOVAMENTE</button>
+                <button type="button" class="btn btn-secondary" id="btn-gameover-character">TROCAR PERSONAGEM</button>
                 <button type="button" class="btn btn-secondary" id="btn-change-player">TROCAR JOGADOR</button>
             </div>
         </div>

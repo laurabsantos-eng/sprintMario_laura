@@ -52,8 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let crownHideTimer = null;
 
     // ===== PERSONAGENS =====
-    // run = imagem correndo | dead = imagem ao bater no castelo | deadWidth = largura da imagem "dead" (px)
     const CHARACTERS = [
+        // run = imagem correndo | dead = imagem ao bater no castelo | deadWidth = largura da imagem "dead" (px)
         { id: 'mario', nome: 'Mario', run: 'assets/mario.gif', dead: 'assets/game-over.png', deadWidth: 75 },
         { id: 'wanda', nome: 'Wanda', run: 'assets/wanda.gif', dead: 'assets/wanda_morte.png', deadWidth: 71 },
         { id: 'cosmo', nome: 'Cosmo', run: 'assets/cosmo.gif', dead: 'assets/cosmo_morte.png', deadWidth: 88 },
@@ -69,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const characterList = document.getElementById('character-list');
     const characterModal = document.getElementById('character-modal');
     const btnChangeCharacter = document.getElementById('btn-change-character');
+    const btnSite = document.getElementById('btn-site');
+    const btnGameoverCharacter = document.getElementById('btn-gameover-character');
+    let characterBackTo = 'menu';   // para onde o botão VOLTAR leva: 'menu' ou 'gameover'
     const btnCharacterBack = document.getElementById('btn-character-back');
 
 // ===== BÔNUS: Wanda e Cosmo ficam bloqueados até o jogador chegar ao último level =====
@@ -124,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let selectedCharacter = CHARACTERS.find(c => c.id === savedCharId && isUnlocked(c)) || CHARACTERS[0];
 
     let level = 1;
-    const MAX_LEVEL = 2;        // último level: aqui a velocidade já chegou no limite (MIN_SPEED)
+    const MAX_LEVEL = 8;        // último level: aqui a velocidade já chegou no limite (MIN_SPEED)
     const BASE_SPEED = 1.6;     // duração inicial do cano (segundos)
     const MIN_SPEED = 0.6;      // limite: não deixar impossível
     const SPEED_STEP = 0.15;    // quanto reduz a cada level
@@ -599,26 +602,51 @@ document.addEventListener('DOMContentLoaded', () => {
         gameoverModal.classList.remove('active');
         resetElements();
 
-        // O nome agora vem do campo de texto (continua preenchido)
+        // Novo jogador: o nome vem do campo de texto, que começa vazio
         currentPlayer = '';
+        playerInput.value = '';
 
         startModal.classList.add('active');
         playerInput.focus();
-        playerInput.select();           // digitar substitui o nome; não digitar mantém o mesmo jogador
-        refreshPlayerCharacters();      // confere o progresso do nome que está no campo
+        refreshPlayerCharacters();      // sem nome = sem bônus (os personagens voltam a bloquear)
     });
 
     // Botão "TROCAR PERSONAGEM" no menu inicial
     btnChangeCharacter.addEventListener('click', () => {
+        characterBackTo = 'menu';
         renderCharacters();                       // desenha os cartões
         startModal.classList.remove('active');    // fecha o menu
         characterModal.classList.add('active');   // abre a escolha
     });
 
+    // Botão "VISITAR SITE" no menu inicial
+    const SITE_URL = 'EMPRESA.pdf';            // arquivo na mesma pasta do index.php. Quando o site estiver pronto, troque por 'https://meusite.com'
+    const SITE_LABEL = btnSite.textContent;    // guarda o texto original do botão
+
+    btnSite.addEventListener('click', () => {
+        if (SITE_URL) {
+            window.open(SITE_URL, '_blank', 'noopener');   // abre em nova aba (o jogo continua aberto)
+            return;
+        }
+        // enquanto o site não existe, avisa no próprio botão
+        btnSite.textContent = 'EM BREVE...';
+        setTimeout(() => { btnSite.textContent = SITE_LABEL; }, 1500);
+    });
+
+    // Botão "TROCAR PERSONAGEM" na tela de Game Over (continua sendo o MESMO jogador)
+    btnGameoverCharacter.addEventListener('click', () => {
+        characterBackTo = 'gameover';
+        resetElements();                          // tira a imagem de "bateu" para mostrar o personagem escolhido
+        renderCharacters();
+        gameoverModal.classList.remove('active');
+        characterModal.classList.add('active');
+    });
+
     // Botão "VOLTAR" na escolha de personagem
     btnCharacterBack.addEventListener('click', () => {
         characterModal.classList.remove('active');
-        startModal.classList.add('active');
+        // volta para a tela de onde a pessoa veio
+        (characterBackTo === 'gameover' ? gameoverModal : startModal).classList.add('active');
     });
 
     // 5. Controle do Pulo por Teclado (Espaço ou Seta para Cima)
