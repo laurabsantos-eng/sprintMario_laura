@@ -67,12 +67,15 @@ body {
     height: 480px;
     border-left: 4px solid #ff69bb; /*borda do jogo*/
     border-right: 4px solid #7df58b;
-    border-bottom: 20px solid rgb(51, 206, 51); /*grama*/
+    border-bottom: 20px solid #cbbd93; /*grama*/
     border-radius: 0 0 12px 12px;
     margin: 0 auto;
     position: relative;
     overflow: hidden;
-    background: linear-gradient(#87ceeb, #e0f6ff); /*ceu*/
+    background-image: url('../assets/fundo-mar.png'); /* Nome da imagem na pasta assets */
+    background-size: cover;                           /* Faz a imagem cobrir toda a área do jogo */
+    background-position: center;                      /* Centraliza a imagem */
+    background-repeat: no-repeat;                     /* Evita que a imagem se repita */
     box-shadow: 0 10px 30px rgba(243, 239, 239, 0.5); /*é o brilinho atras do jogo*/
     cursor: pointer;
 }
@@ -103,11 +106,27 @@ body {
     object-fit: contain;
 }
 
-.clouds {
+/* Atualiza a classe .clouds no teu styles.css */
+.bolha {
     position: absolute;
-    width: 550px;
-    top: 30px;
-    right: -550px;
+    width: 300px; /* Tamanho ajustado para as bolhas */
+    top: 50px;    /* Altura onde as bolhas passam */
+    right: -300px;
+}
+
+/* Animação ativa durante o jogo (continua a mesma) */
+.game-board.running .bolha {
+    animation: bolha-animation 12s infinite linear; /* Reduzido de 18s para 12s para mover um pouco mais rápido */
+}
+
+/* Animação que faz as bolhas moverem-se da direita para a esquerda */
+@keyframes bolha-animation {
+    from {
+        right: -300px;
+    }
+    to {
+        right: 100%;
+    }
 }
 
 /* Dica de pulo na tela */
@@ -449,10 +468,12 @@ body {
     .mario {
         width: 100px;
     }
-    .mario[data-char="wanda"],
-    .mario[data-char="cosmo"] {
-        width: 65px;
-    }
+.mario[data-char="wanda"],
+.mario[data-char="cosmo"],
+.mario[data-char="wanda-wanda"],
+.mario[data-char="cosmo-visao"] {
+    width: 80px;
+}
     .castelo {
         width: 45px;
     }

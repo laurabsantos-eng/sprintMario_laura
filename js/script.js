@@ -52,13 +52,17 @@ document.addEventListener('DOMContentLoaded', () => {
     let crownHideTimer = null;
 
     // ===== PERSONAGENS =====
+    // run = imagem correndo | dead = imagem ao bater no castelo | deadWidth = largura da imagem "dead" (px)
     const CHARACTERS = [
-        { id: 'mario', nome: 'Mario', run: 'assets/mario.gif' },
-        { id: 'wanda', nome: 'Wanda', run: 'assets/wanda.gif'},
-        { id: 'cosmo', nome: 'Cosmo', run: 'assets/cosmo.gif'},
-        { id: 'wanda-wanda', nome: 'Wanda', run: 'assets/wanda_wanda.gif', bloqueado: true },
-        { id: 'cosmo-visao', nome: 'Cosmo', run: 'assets/cosmo_visão.gif', bloqueado: true }
+        { id: 'mario', nome: 'Mario', run: 'assets/mario.gif', dead: 'assets/game-over.png', deadWidth: 75 },
+        { id: 'wanda', nome: 'Wanda', run: 'assets/wanda.gif', dead: 'assets/wanda_morte.png', deadWidth: 71 },
+        { id: 'cosmo', nome: 'Cosmo', run: 'assets/cosmo.gif', dead: 'assets/cosmo_morte.png', deadWidth: 88 },
+        { id: 'wanda-wanda', nome: 'Wanda', run: 'assets/wanda_wanda.gif', dead: 'assets/wanda_morte.png', deadWidth: 71, bloqueado: true },
+        { id: 'cosmo-visao', nome: 'Cosmo', run: 'assets/cosmo_visao.gif', dead: 'assets/cosmo_morte.png', deadWidth: 88, bloqueado: true }
     ];
+
+    // Pré-carrega as imagens de "bater no castelo" para aparecerem na hora da colisão
+    CHARACTERS.forEach(c => { if (c.dead) new Image().src = c.dead; });
 
     const menuCharacterImg = document.getElementById('menu-character-img');
     const characterNameEl = document.getElementById('character-name');
@@ -67,18 +71,52 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnChangeCharacter = document.getElementById('btn-change-character');
     const btnCharacterBack = document.getElementById('btn-character-back');
 
-    // ===== BÔNUS: Wanda e Cosmo ficam bloqueados até o jogador chegar no último level =====
-    const UNLOCK_KEY = 'mario_jump_unlocked';
-    let bonusUnlocked = localStorage.getItem(UNLOCK_KEY) === 'true';
-    let unlockedThisRun = false;   // true só na partida em que o bônus foi conquistado
+// ===== BÔNUS: Wanda e Cosmo ficam bloqueados até o jogador chegar ao último level =====
+    let bonusUnlocked = false;
+    let unlockedThisRun = false;
 
     const unlockToast = document.getElementById('unlock-toast');
     const unlockMessage = document.getElementById('unlock-message');
     const characterHint = document.getElementById('character-hint');
     let toastTimer = null;
 
+    // Chave única para salvar o progresso de CADA jogador separadamente
+    // Retorna a chave do localStorage específica para o jogador atual
+    function getPlayerUnlockKey() {
+        const typed = playerInput ? playerInput.value : '';
+        const name = (currentPlayer || typed || 'default').trim().toLowerCase();
+        return `mario_jump_unlocked_${name}`;
+    }
+    // Carrega se o jogador atual tem o bônus liberado
+    function loadPlayerProgress() {
+        bonusUnlocked = localStorage.getItem(getPlayerUnlockKey()) === 'true';
+    }
+
     function isUnlocked(char) {
         return !char.bloqueado || bonusUnlocked;
+    }
+
+
+    // Função que executa o desbloqueio
+    function unlockBonus() {
+        if (bonusUnlocked) return;
+
+        bonusUnlocked = true;
+        unlockedThisRun = true;
+
+        // Salva no localStorage associado ao nome do jogador atual
+        localStorage.setItem(getPlayerUnlockKey(), 'true');
+
+        // Atualiza a interface da lista de escolha de personagens
+        renderCharacters();
+
+        // Exibe a notificação na tela
+        if (unlockToast) {
+            unlockToast.textContent = '🏆 CONQUISTA! Wanda e Cosmo desbloqueados!';
+            unlockToast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => unlockToast.classList.remove('show'), 4000);
+        }
     }
 
     // Lê o personagem salvo no navegador; se não houver (ou estiver bloqueado), usa o Mario
@@ -196,28 +234,31 @@ document.addEventListener('DOMContentLoaded', () => {
             : `Chegue ao level ${MAX_LEVEL} para desbloquear Wanda e Cosmo!`;
     }
 
-    // Libera Wanda e Cosmo e avisa o jogador (só dispara uma vez)
-    function unlockBonus() {
-        if (bonusUnlocked) return;
+    // Confere o progresso do nome que está no campo e aplica o personagem certo
+    function refreshPlayerCharacters() {
+        loadPlayerProgress();
 
-        bonusUnlocked = true;
-        unlockedThisRun = true;
-        localStorage.setItem(UNLOCK_KEY, 'true');
+        // volta ao personagem salvo, se esse jogador já tiver liberado ele; senão Mario
+        const saved = CHARACTERS.find(c => c.id === localStorage.getItem('mario_jump_character') && isUnlocked(c));
+        const next = saved || CHARACTERS[0];
+
+        if (next.id !== selectedCharacter.id || !mario.dataset.char) {
+            selectedCharacter = next;
+            applyCharacter();
+        }
         renderCharacters();
-
-        unlockToast.textContent = '🏆 CONQUISTA! Wanda e Cosmo desbloqueados!';
-        unlockToast.classList.add('show');
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => unlockToast.classList.remove('show'), 4000);
     }
-
-    applyCharacter();   // aplica o personagem salvo ao abrir a página
 
     // Recupera último nome utilizado caso exista
     const savedName = localStorage.getItem('mario_jump_player');
     if (savedName && playerInput) {
         playerInput.value = savedName;
     }
+
+    refreshPlayerCharacters();   // aplica o personagem salvo ao abrir a página
+
+    // Se a pessoa digitar outro nome, confere o progresso dele na hora
+    playerInput.addEventListener('input', refreshPlayerCharacters);
 
 
     // quando o cano termina uma volta e reinicia, aplica a velocidade pendente
@@ -263,11 +304,12 @@ document.addEventListener('DOMContentLoaded', () => {
         gameBoard.classList.add('running');
 
         // Loop de pontuação progressiva (1 ponto a cada 100ms)
+        // Loop de pontuação progressiva (1 ponto a cada 100ms)
         scoreLoop = setInterval(() => {
             if (isPlaying) {
                 score += 1;
                 scoreDisplay.textContent = score;
-                //A cada 50 pontos a dificuldade aumenta
+
                 const newLevel = Math.min(Math.floor(score / 50) + 1, MAX_LEVEL);
                 if (newLevel !== level) {
                     level = newLevel;
@@ -276,9 +318,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Nova fase: libera a coroa do novo level
                     levelCrownsCount = 0;
+                    scheduleNextCrown();
+                }
 
-                    // Chegou no último level: desbloqueia os personagens bônus
-                    if (level === MAX_LEVEL) unlockBonus();
+                // Libera os bónus ao chegar ao nível 8
+                if (level >= MAX_LEVEL) {
+                    unlockBonus();
                 }
             }
         }, 100);
@@ -389,9 +434,10 @@ document.addEventListener('DOMContentLoaded', () => {
         // Congela o Mario na altura exata e muda para a imagem de Game Over
         mario.style.animation = 'none';
         mario.style.bottom = `${marioPosition}px`;
-        mario.src = 'assets/game-over.png';
-        mario.style.width = '75px';
-        mario.style.marginLeft = '50px';
+        mario.src = selectedCharacter.dead || 'assets/game-over.png';
+        mario.style.width = `${selectedCharacter.deadWidth || 75}px`;
+        // só o Mario precisa deslocar para a direita (a imagem dele tem espaço vazio)
+        mario.style.marginLeft = selectedCharacter.id === 'mario' ? '50px' : '0px';
 
         // Atualiza modal de Game Over
         finalScoreValue.textContent = score;
@@ -509,7 +555,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Submit do Formulário de Início (INICIAR JOGO)
     startForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Impede o recarregamento da página
+        e.preventDefault();
 
         const nameValue = playerInput.value.trim();
         if (!nameValue) {
@@ -520,7 +566,9 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPlayer = nameValue;
         localStorage.setItem('mario_jump_player', currentPlayer);
 
-        // Fecha tela de início e começa o jogo
+        // Carrega o progresso deste jogador e aplica o personagem dele
+        refreshPlayerCharacters();
+
         startModal.classList.remove('active');
         startGame();
     });
@@ -550,9 +598,14 @@ document.addEventListener('DOMContentLoaded', () => {
     btnChangePlayer.addEventListener('click', () => {
         gameoverModal.classList.remove('active');
         resetElements();
+
+        // O nome agora vem do campo de texto (continua preenchido)
+        currentPlayer = '';
+
         startModal.classList.add('active');
-        playerInput.value = '';
         playerInput.focus();
+        playerInput.select();           // digitar substitui o nome; não digitar mantém o mesmo jogador
+        refreshPlayerCharacters();      // confere o progresso do nome que está no campo
     });
 
     // Botão "TROCAR PERSONAGEM" no menu inicial

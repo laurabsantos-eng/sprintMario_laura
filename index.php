@@ -55,7 +55,7 @@ try {
 
         
         <main class="game-board" id="game-board">
-            <img src="assets/clouds.png" class="clouds" alt="Nuvens">
+            <img src="assets/bolha.png" class="bolha" alt="Bolhas">
             <img src="assets/mario.gif" class="mario" alt="Mario">
             <img src="assets/castelo.png" class="castelo" alt="Castelo">
             <img src="assets/coroa.png" class="crown" id="crown" alt="Coroa">
